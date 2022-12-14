@@ -7,9 +7,6 @@ import numpy as np
 import BrowserDriver
 import math
 
-# some vars
-oldposition = [0, 0]
-
 
 # select the game window
 def selectgamewindow():
@@ -33,79 +30,77 @@ def calculatedegrees(x1, y1, x2, y2):
     return round(degrees)
 
 
-# calculate degrees using current player position and destination
-def calculatedegreesOverload(x1, y1, destination):
-    degrees = np.arctan2(destination[0] - x1, destination[1] - y1) * 180 / np.pi
-    if degrees < 0: degrees += 360
-    return round(degrees)
+def run():
+    # Start running
+    pydirectinput.press("=")
+    print("Start running")
+
+
+def stop():
+    # Stop running
+    pydirectinput.press("=")
+    print("Stop running")
+
+
+def trackplayer(aeternummap):
+    currentposition = BrowserDriver.getposition(aeternummap)
+    time.sleep(0.2)  # Time between measuring coordinatepoints to make sure there is a measurable difference
+    newposition = BrowserDriver.getposition(aeternummap)
+    return currentposition, newposition
+
+
+def adjustmovement(currentposition, newposition, destination):
+    currentdegrees = calculatedegrees(currentposition[0], currentposition[1], newposition[0], newposition[1])
+    newdegrees = calculatedegrees(newposition[0], newposition[1], destination[0], destination[1])
+    degreeoffset = newdegrees - currentdegrees
+    pydirectinput.moveRel(degreeoffset, None)
+    print("moving mouse ", degreeoffset, " pixels")
 
 
 # calculate distance between player position and destination
-def calculatedistance(x1, y1, x2, y2):
-    return math.hypot(x2-x1, y2-y1)
-
-
-# caclulate which way in degrees the player is facing
-def calculatestartingdegrees(currentposition, coordinatemap):
-    time.sleep(0.5)
-    pydirectinput.press("=")
-    time.sleep(0.5)
-    pydirectinput.press("=")
-    newposition = BrowserDriver.getposition(coordinatemap)
-    startingdegree = calculatedegrees(currentposition[0], currentposition[1], newposition[0], newposition[1])
-    return startingdegree
+def calculatedistance(playercoordinates, destination):
+    return math.hypot(destination[0]-playercoordinates[0], destination[1]-playercoordinates[1])
 
 
 while True:
     # The route my man supposed to walk(edit this with your route)
-    route = ((7285.611, 3047,586), (7287.975, 3074,510))
+    Walkingroute = ((7285.500, 3047.500), (7286.618, 3074.531), (7262.379, 3091.458), (7302.864, 3127.777))
 
-    def recalibrate(previousposition, destination, coordinatemap):
-        newposition = BrowserDriver.getposition(coordinatemap)
-        currentdegrees = calculatedegrees(previousposition[0], previousposition[1], destination[0], destination[1])
-        degreetowalk = calculatedegrees(newposition[0], newposition[1], destination[0], destination[1])
-        degreeoffset = degreetowalk - currentdegrees
-        pydirectinput.moveRel(degreeoffset, None)
-        print("moving mouse ", degreeoffset)
-
-    def start(routetowalk):
-        coordinatemap = BrowserDriver.StartBrowser()
+    def start(route):
+        aeternummap = BrowserDriver.StartBrowser()
         selectgamewindow()
 
-        # For each checkpoint in the given route
-        for destination in routetowalk:
-            # start running to destination
-            pydirectinput.press("=")
-
+        for destination in route:
+            run()  # Start running
             destinationreached = False
             while not destinationreached:
-                currentpos = BrowserDriver.getposition(coordinatemap)
-                # coordinatieafstand tussen currentpos en destination is te kort misschien? calibreren.
-                previousposition = currentpos
-                distance = calculatedistance(currentpos[0], currentpos[1], destination[0], destination[1])
-                print(distance, " meters left ")
 
-                #reposition camera
-                recalibrate(previousposition, destination, coordinatemap)
+                # keep track of coordinates
+                playercoordinates = trackplayer(aeternummap)
 
-                while distance < 3:
-                    while distance > 1:
-                        currentpos = BrowserDriver.getposition(coordinatemap)
-                        distance = calculatedistance(currentpos[0], currentpos[1], destination[0], destination[1])
-                        print(distance)
-                        if distance < 1:
-                            pydirectinput.press("=")
-                            destinationreached = True
-                            print("Destination Reached")
+                # Keep player on track
+                adjustmovement(playercoordinates[0], playercoordinates[1], destination)
 
-            # Loot the object
-            print(BrowserDriver.getposition(coordinatemap))
-            print(calculatedistance(currentpos[0], currentpos[1], destination[0], destination[1]))
+                # Calculate distance left
+                distance = calculatedistance(playercoordinates[1], destination)
+                print(distance)
+
+                while distance < 5:
+                    playercoordinates = trackplayer(aeternummap)
+                    distance = calculatedistance(playercoordinates[1], destination)
+                    print(distance)
+                    if distance < 2:
+                        stop()  # Stop running
+                        destinationreached = True
+                        print("Destination Reached")
+                        break
+
+            # Start looting
             pydirectinput.press("F5")
-            print("Looting that shit")
-            time.sleep(20)
+            print("Looting")
+            time.sleep(2)
 
-    start(route)
+    start(Walkingroute)
 
 time.sleep(2)
 

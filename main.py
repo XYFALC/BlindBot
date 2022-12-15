@@ -64,12 +64,12 @@ def calculatedistance(playercoordinates, destination):
 
 while True:
     # The route my man supposed to walk(edit this with your route)
-    Walkingroute = ((7285.500, 3047.500), (7286.618, 3074.531), (7262.379, 3091.458), (7302.864, 3127.777))
+    Walkingroute = ((9718.066, 3003.621), (9743.861, 3035.369), (9743.861, 3035.369), (9754.434, 3018.725), (9761.420, 3025.093), (9763.248, 3032.627))
 
     def start(route):
         aeternummap = BrowserDriver.StartBrowser()
         selectgamewindow()
-
+        time.sleep(3)  # wait for game window to open
         for destination in route:
             run()  # Start running
             destinationreached = False
@@ -96,13 +96,14 @@ while True:
                         break
 
             # Start looting
+            time.sleep(1)
             pydirectinput.press("F5")
             print("Looting")
-            time.sleep(2)
+            time.sleep(10)
 
     start(Walkingroute)
 
-time.sleep(2)
+time.sleep(200)
 
 
 

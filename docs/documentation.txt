@@ -1,6 +1,9 @@
 TODO:
 
-Path import
+Unit testing
+https://docs.python.org/3/library/unittest.html
+
+Pathing import
 
 Image recognition
 # import pyscreenshot as ImageGrab

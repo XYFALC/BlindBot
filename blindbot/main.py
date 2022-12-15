@@ -24,7 +24,8 @@ def select_gamewindow():
 # calculate degrees using current player position and destination
 def calculate_degrees(x1, y1, x2, y2):
     degrees = np.arctan2(x2 - x1, y2 - y1)*180/np.pi
-    if degrees < 0: degrees += 360
+    if degrees < 0:
+        degrees += 360
     return round(degrees)
 
 
@@ -42,14 +43,17 @@ def stop():
 
 def track_player(aeternum_map):
     current_position = browserdriver.get_position(aeternum_map)
-    time.sleep(0.2)  # Time between measuring coordinatepoints to make sure there is a measurable difference
+    # Time between measuring coordinatepoints to make sure there is a measurable difference
+    time.sleep(0.2)
     new_position = browserdriver.get_position(aeternum_map)
     return current_position, new_position
 
 
 def adjust_movement(current_position, new_position, destination):
-    current_degrees = calculate_degrees(current_position[0], current_position[1], new_position[0], new_position[1])
-    new_degrees = calculate_degrees(new_position[0], new_position[1], destination[0], destination[1])
+    current_degrees = calculate_degrees(
+        current_position[0], current_position[1], new_position[0], new_position[1])
+    new_degrees = calculate_degrees(
+        new_position[0], new_position[1], destination[0], destination[1])
     degree_offset = new_degrees - current_degrees
     pydirectinput.moveRel(degree_offset, None)
     print("moving mouse ", degree_offset, " pixels")
@@ -62,7 +66,8 @@ def calculate_distance(player_coordinates, destination):
 
 while True:
     # The route my man supposed to walk(edit this with your route)
-    walking_route = ((9718.066, 3003.621), (9743.861, 3035.369), (9743.861, 3035.369), (9754.434, 3018.725), (9761.420, 3025.093), (9763.248, 3032.627))
+    walking_route = ((9718.066, 3003.621), (9743.861, 3035.369), (9743.861, 3035.369),
+                     (9754.434, 3018.725), (9761.420, 3025.093), (9763.248, 3032.627))
 
     def start(route):
         aeternum_map = browserdriver.start_browser()
@@ -77,15 +82,18 @@ while True:
                 player_coordinates = track_player(aeternum_map)
 
                 # Keep player on track
-                adjust_movement(player_coordinates[0], player_coordinates[1], destination)
+                adjust_movement(
+                    player_coordinates[0], player_coordinates[1], destination)
 
                 # Calculate distance left
-                distance = calculate_distance(player_coordinates[1], destination)
+                distance = calculate_distance(
+                    player_coordinates[1], destination)
                 print(distance)
 
                 while distance < 5:
                     player_coordinates = track_player(aeternum_map)
-                    distance = calculate_distance(player_coordinates[1], destination)
+                    distance = calculate_distance(
+                        player_coordinates[1], destination)
                     print(distance)
                     if distance < 2:
                         stop()  # Stop running
@@ -105,11 +113,3 @@ while True:
     start(walking_route)
 
 time.sleep(200)
-
-
-
-
-
-
-
-

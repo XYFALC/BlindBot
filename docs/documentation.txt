@@ -1,0 +1,15 @@
+TODO:
+
+Path import
+
+Image recognition
+# import pyscreenshot as ImageGrab
+# import pytesseract
+
+AI Pathing
+
+Cloud service with elastic Linux VM's automatically booting up New World instances and botting galore
+
+Payment System
+
+Homepage

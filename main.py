@@ -99,6 +99,9 @@ while True:
             time.sleep(1)
             pydirectinput.press("F5")
             print("Looting")
+            # ToDO: check if current object is looted
+            # ToDO: Remove timebreaks(time.sleep(10)) where possible to optimize the bot
+            # ToDO: Create checkpoints for randomization, not every destination has to be a lootable object
             time.sleep(10)
 
     start(Walkingroute)

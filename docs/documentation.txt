@@ -2,6 +2,7 @@ TODO:
 
 Unit testing
 https://docs.python.org/3/library/unittest.html
+https://docs.python-guide.org/writing/tests/
 
 Pathing import
 
